@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Reflection;
+using SimpleInjector;
+using SimpleInjector.Integration.Web.Mvc;
 
 namespace Violet.Models
 {
     public class SimpleInjectorDependency
     {
+
     }
 }
