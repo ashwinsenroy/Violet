@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Violet.Interfaces.ManagerInterfaces
 {
-    internal interface ILogInManager
+    public interface ILogInManager
     {
 
 

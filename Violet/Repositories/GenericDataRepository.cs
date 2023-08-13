@@ -1,11 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Xml.Linq;
+using MySqlConnector;
 using Violet.CommonHelper;
 using Violet.Interfaces.RepositoryInterfaces;
 
@@ -15,31 +12,35 @@ namespace Violet.Repositories
     {
 
         private string connectionString = ConfigurationManager.ConnectionStrings["VioletDB"].ConnectionString;
-        public bool Add<T>(T data)
+        public bool Add<T>(T data)  // this is a traditional method to add to db, using an insert sql query.
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
 
                     // Create the INSERT query
                     string Table = ReflectionHelper.GetTableName(data);
-                    string[] parameters = ReflectionHelper.GetAllPropertyNames(data);
-                    string InsertQuery = QueryHelper.CreateInsertQuery(Table, parameters);
+                    Dictionary<string, object> dic = new Dictionary<string, object>();
+                    dic = ReflectionHelper.ConvertObjectIntoDictionary(data);
+                    dic = ReflectionHelper.FilterOutPropertiesWithKeyAttribute(dic,data);
+                    int NumberOfParameters = ReflectionHelper.NumberofPropertiesWithoutKeyAttribute(dic, data);
+                    string[] parameters = new string[NumberOfParameters];
+                    parameters = ReflectionHelper.GetPropertyNames(dic);
+                    string InsertQuery = QueryHelper.CreateInsertQuery(NumberOfParameters,Table,dic);
 
-                    using (SqlCommand command = new SqlCommand(InsertQuery, connection))
+                    using (MySqlCommand command = new MySqlCommand(InsertQuery, connection))
                     {
 
                         // Add parameters to the query to prevent SQL injection
-                        Dictionary<string, object> dic = new Dictionary<string, object>();
-                        dic = ReflectionHelper.ConvertObjectIntoDictionary(data);
-                        foreach (var parameter in dic)
+                        Dictionary<string, object> dictionary = dic;
+                        foreach (var parameter in dictionary)
                         {
                             string parameterName = parameter.Key;
                             parameterName = string.Concat("@", parameterName);
                             object parameterValue = parameter.Value;
-                            command.Parameters.AddWithValue(parameterName,parameterValue);
+                            command.Parameters.AddWithValue(parameterName, parameterValue);
 
                         }
 

@@ -7,7 +7,7 @@ using Violet.Models;
 
 namespace Violet.Repositories
 {
-    public abstract class UsersRepository<T> : GenericDataRepository<Users>, IUsersRepository
+    public class UsersRepository : GenericDataRepository<Users>, IUsersRepository
     {
 
 

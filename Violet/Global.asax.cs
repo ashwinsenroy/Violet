@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Violet.DIResolver;
+using Violet.Models;
 
 namespace Violet
 {
@@ -14,11 +14,7 @@ namespace Violet
     {
         protected void Application_Start()
         {
-            // Configure the DI container
-            var container = DependecyInjectionResolver.Configure();
-
-            // Set the Autofac dependency resolver for MVC
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
+            SimpleInjectorDependency.RegisterDependencies();
 
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
